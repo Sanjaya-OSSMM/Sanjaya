@@ -12,7 +12,9 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.0",
+    "input": "^1.0.1",
     "natural": "^8.0.1",
-    "playwright": "^1.47.2"
+    "playwright": "^1.47.2",
+    "telegram": "^2.25.11"
   }
 }

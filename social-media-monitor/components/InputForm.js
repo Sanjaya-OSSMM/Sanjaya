@@ -31,6 +31,7 @@ export default function InputForm({ onAnalysis, theme }) {
             <option value="">Select Platform</option>
             <option value="twitter">Twitter 🐦</option>
             <option value="instagram">Instagram 📷</option>
+            <option value="telegram">Telegram📃✈️</option>
           </select>
         </div>
         <div>
