@@ -2,12 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Importing Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;500&display=swap');
+
 @layer base {
   .light-mode {
     --background-color: #e3f2fd; /* Light blue-ish background */
     --foreground-color: #1e88e5; /* Material blue for text */
     --card-background-color: #ffffff;
     --shadow-color: rgba(0, 0, 0, 0.1);
+    --font-family: 'Roboto', sans-serif; /* Setting font for light mode */
   }
 
   .dark-mode {
@@ -16,16 +20,19 @@
     --card-background-color: rgba(52, 48, 68, 0.8); /* Semi-transparent glass */
     --shadow-color: rgba(255, 255, 255, 0.2);
     --border-color: rgba(255, 255, 255, 0.3);
+    --font-family: 'Poppins', sans-serif; /* Setting font for dark mode */
   }
 
   body.light-mode {
     background-color: var(--background-color);
     color: var(--foreground-color);
+    font-family: var(--font-family); /* Apply font to body */
   }
 
   body.dark-mode {
     background-color: var(--background-color);
     color: var(--foreground-color);
+    font-family: var(--font-family); /* Apply font to body */
   }
 
   .glass-card {
@@ -39,6 +46,7 @@
 @layer components {
   .button {
     @apply py-2 px-4 rounded-lg font-semibold text-white transition;
+    font-family: 'Poppins', sans-serif;
   }
 
   .button-light {
@@ -52,5 +60,6 @@
   .form-input {
     @apply bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded-lg w-full;
     transition: background-color 0.3s ease, color 0.3s ease;
+    font-family: 'Roboto', sans-serif;
   }
 }

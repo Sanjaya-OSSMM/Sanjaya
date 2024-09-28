@@ -25,10 +25,10 @@ export default function Home() {
       {/* Header */}
       <header className="flex justify-between items-center mb-8">
         <div className="flex flex-col">
-          <h1 className="text-4xl font-bold text-left">
+          <h1 className="text-4xl font-bold text-left" style={{ fontFamily: 'Poppins, sans-serif' }}>
             Sanjaya
           </h1>
-          <h2 className="text-2xl font-semibold text-left mt-2">
+          <h2 className="text-2xl font-semibold text-left mt-2" style={{ fontFamily: 'Poppins, sans-serif' }}>
             Social Media Monitoring Tool 🔍
           </h2>
         </div>
@@ -50,7 +50,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full text-center p-4 mt-8 border-t border-gray-300 dark:border-gray-600">
+      <footer className="w-full text-center p-4 mt-8 border-t border-gray-300 dark:border-gray-600" style={{ fontFamily: 'Roboto, sans-serif' }}>
         <p>Built with Next.js and Tailwind CSS with ❤️ by Rasenkai © {new Date().getFullYear()}</p>
       </footer>
     </div>

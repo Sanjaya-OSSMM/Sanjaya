@@ -20,7 +20,7 @@ export default function InputForm({ onAnalysis, theme }) {
     <form onSubmit={handleSubmit} className="glass-card p-6 rounded-lg shadow-md">
       <div className="space-y-6">
         <div>
-          <label htmlFor="platform" className="block mb-2 text-lg font-bold">Platform 📱</label>
+          <label htmlFor="platform" className="block mb-2 text-lg font-bold" style={{ fontFamily: 'Poppins, sans-serif' }}>Platform 📱</label>
           <select
             id="platform"
             value={platform}
@@ -30,12 +30,11 @@ export default function InputForm({ onAnalysis, theme }) {
           >
             <option value="">Select Platform</option>
             <option value="twitter">Twitter 🐦</option>
-            <option value="instagram">Instagram 📷</option>
             <option value="telegram">Telegram📃✈️</option>
           </select>
         </div>
         <div>
-          <label htmlFor="keyword" className="block mb-2 text-lg font-bold">Keyword 🔑</label>
+          <label htmlFor="keyword" className="block mb-2 text-lg font-bold" style={{ fontFamily: 'Poppins, sans-serif' }}>Keyword 🔑</label>
           <input
             id="keyword"
             type="text"
@@ -44,6 +43,7 @@ export default function InputForm({ onAnalysis, theme }) {
             placeholder="Enter keyword"
             className="form-input"
             required
+            style={{ fontFamily: 'Roboto, sans-serif' }}
           />
         </div>
         <div className="flex items-center">
@@ -54,7 +54,7 @@ export default function InputForm({ onAnalysis, theme }) {
             onChange={(e) => setIsLoggedIn(e.target.checked)}
             className="mr-2"
           />
-          <label htmlFor="logged-in" className="text-lg font-semibold">Logged in</label>
+          <label htmlFor="logged-in" className="text-lg font-semibold" style={{ fontFamily: 'Poppins, sans-serif' }}>Logged in</label>
         </div>
         <button
           type="submit"
