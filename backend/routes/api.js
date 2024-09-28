@@ -2,22 +2,28 @@ const express = require('express');
 const { scrapeContent } = require('../services/scraper');
 const { analyzeContent } = require('../services/analyzer');
 const { prepareVisualizationData } = require('../services/visualizer');
+
 const router = express.Router();
 
 router.post('/monitor', async (req, res) => {
   try {
     const { platform, keyword, isLoggedIn } = req.body;
+
+    if (!platform || !keyword) {
+      return res.status(400).json({ error: 'Platform and keyword are required' });
+    }
+
     const content = await scrapeContent(platform, keyword, isLoggedIn);
     const analysis = await analyzeContent(content);
     const visualizationData = prepareVisualizationData(analysis);
-    
+
     res.json({
-      content: analysis,  // We're sending the analyzed content
+      content: analysis,
       visualizations: visualizationData,
     });
   } catch (error) {
     console.error('Error in /monitor endpoint:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message || 'An unexpected error occurred' });
   }
 });
 

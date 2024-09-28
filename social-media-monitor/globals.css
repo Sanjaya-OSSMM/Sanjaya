@@ -2,39 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Importing Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;500&display=swap');
 
 @layer base {
   .light-mode {
-    --background-color: #e3f2fd; /* Light blue-ish background */
-    --foreground-color: #1e88e5; /* Material blue for text */
+    --background-color: #f3f4f6;
+    --foreground-color: #1f2937;
     --card-background-color: #ffffff;
     --shadow-color: rgba(0, 0, 0, 0.1);
-    --font-family: 'Roboto', sans-serif; /* Setting font for light mode */
+    --font-family: 'Roboto', sans-serif;
   }
-
+  
   .dark-mode {
-    --background-color: rgba(31, 29, 43, 0.8); /* Glass effect base */
-    --foreground-color: #b388ff; /* Purple shade for text */
-    --card-background-color: rgba(52, 48, 68, 0.8); /* Semi-transparent glass */
-    --shadow-color: rgba(255, 255, 255, 0.2);
-    --border-color: rgba(255, 255, 255, 0.3);
-    --font-family: 'Poppins', sans-serif; /* Setting font for dark mode */
+    --background-color: #111827;
+    --foreground-color: #f3f4f6;
+    --card-background-color: #1f2937;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --font-family: 'Poppins', sans-serif;
   }
-
+  
   body.light-mode {
     background-color: var(--background-color);
     color: var(--foreground-color);
-    font-family: var(--font-family); /* Apply font to body */
+    font-family: var(--font-family);
   }
-
+  
   body.dark-mode {
     background-color: var(--background-color);
     color: var(--foreground-color);
-    font-family: var(--font-family); /* Apply font to body */
+    font-family: var(--font-family);
   }
-
+  
   .glass-card {
     backdrop-filter: blur(10px);
     border: 1px solid var(--border-color);
@@ -44,22 +43,14 @@
 }
 
 @layer components {
-  .button {
-    @apply py-2 px-4 rounded-lg font-semibold text-white transition;
-    font-family: 'Poppins', sans-serif;
-  }
-
-  .button-light {
-    @apply bg-blue-500 hover:bg-blue-700;
-  }
-
-  .button-dark {
-    @apply bg-purple-700 hover:bg-purple-900;
-  }
-
   .form-input {
-    @apply bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded-lg w-full;
+    @apply bg-white dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded-lg w-full;
     transition: background-color 0.3s ease, color 0.3s ease;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Roboto, sans-serif';
+  }
+
+  .button {
+    @apply py-2 px-4 rounded font-semibold text-white transition;
+    font-family: 'Poppins, sans-serif';
   }
 }
