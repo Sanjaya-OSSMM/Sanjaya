@@ -66,10 +66,10 @@ export default function Dashboard({ result }) {
               className="border border-gray-300 dark:border-gray-600 rounded-md p-4 bg-white dark:bg-gray-700"
             >
               <p className="font-bold">{post.text}</p>
-              <p>Author: {post.author}</p>
-              <p>Platform: {post.platform}</p>
-              <p>Sentiment: {post.sentiment.toFixed(2)}</p>
-              <p>Keywords: {post.keywords.join(', ')}</p>
+              {post.author && <p>Author: {post.author}</p>}
+              {post.group_name && <p>Group/Channel: {post.group_name}</p>}
+              {post.sentiment !== undefined && <p>Sentiment: {post.sentiment.toFixed(2)}</p>}
+              {post.keywords?.length > 0 && <p>Keywords: {post.keywords.join(', ')}</p>}
             </li>
           ))}
         </ul>

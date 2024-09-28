@@ -41,20 +41,22 @@ async function scrapeTelegram(keyword) {
         try {
             const searchResult = await client.invoke(
                 new Api.messages.Search({
-                    peer: dialog, 
+                    peer: dialog,
                     q: keyword,
                     filter: new Api.InputMessagesFilterEmpty(),
                     limit: 10,
                 })
             );
-            
+
+            // Extract group/channel username or title
+            const dialogName = dialog.entity.username ? `@${dialog.entity.username}` : dialog.name || dialog.title;
+
             for (const message of searchResult.messages) {
                 if (message.message && message.fromId && message.fromId.userId) {
                     messages.push({
-                        group_name: dialog.title || dialog.name,
+                        group_name: dialogName,  // Replace with group or channel username
                         author: message.fromId.userId.toString(),
                         text: message.message,
-                        platform: 'telegram',
                     });
                 }
             }
