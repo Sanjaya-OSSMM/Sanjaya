@@ -8,7 +8,7 @@ export default function Home() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
-  // Ensures the component is only rendered when on the client side
+  // Ensures the component is only rendered on the client side
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -23,27 +23,35 @@ export default function Home() {
   return (
     <div className={`max-w-7xl mx-auto p-8 min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'dark-mode' : 'light-mode'}`}>
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-bold text-center">
-          Social Media Monitoring Tool 🔍
-        </h1>
+      <header className="flex justify-between items-center mb-8">
+        <div className="flex flex-col">
+          <h1 className="text-4xl font-bold text-left">
+            Sanjaya
+          </h1>
+          <h2 className="text-2xl font-semibold text-left mt-2">
+            Social Media Monitoring Tool 🔍
+          </h2>
+        </div>
         <button
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           className="p-2 rounded-md glass-card shadow-lg hover:scale-105 transition-transform"
+          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
         >
           {theme === 'dark' ? '🌞' : '🌙'}
         </button>
-      </div>
-      
-      {/* InputForm */}
-      <InputForm onAnalysis={handleAnalysis} />
+      </header>
 
-      {/* Display Dashboard when result is available */}
-      {analysisResult && <Dashboard result={analysisResult} />}
+      <main>
+        {/* InputForm */}
+        <InputForm onAnalysis={handleAnalysis} theme={theme} />
+
+        {/* Display Dashboard when result is available */}
+        {analysisResult && <Dashboard result={analysisResult} />}
+      </main>
 
       {/* Footer */}
       <footer className="w-full text-center p-4 mt-8 border-t border-gray-300 dark:border-gray-600">
-        <p>Built with Next.js and Tailwind CSS with ❤️ by Rasenkai © 2024</p>
+        <p>Built with Next.js and Tailwind CSS with ❤️ by Rasenkai © {new Date().getFullYear()}</p>
       </footer>
     </div>
   )
