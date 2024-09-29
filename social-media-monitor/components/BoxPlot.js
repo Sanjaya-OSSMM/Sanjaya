@@ -43,6 +43,10 @@ export default function BoxPlot({ data, title }) {
         { x: index, y: max },
       ],
       backgroundColor: `hsl(${index * 60}, 70%, 50%)`,
+      borderColor: `hsl(${index * 60}, 70%, 40%)`,
+      borderWidth: 1,
+      pointRadius: 6,
+      pointHoverRadius: 8,
     }
   })
 
@@ -55,25 +59,59 @@ export default function BoxPlot({ data, title }) {
     plugins: {
       legend: {
         position: 'top',
+        labels: {
+          font: {
+            family: "'Inter', sans-serif",
+            size: 12
+          }
+        }
       },
       title: {
         display: true,
         text: title,
+        font: {
+          family: "'Inter', sans-serif",
+          size: 16,
+          weight: 'bold'
+        }
       },
+      tooltip: {
+        callbacks: {
+          label: (context) => {
+            const dataIndex = context.dataIndex;
+            const dataset = context.dataset;
+            const value = dataset.data[dataIndex].y;
+            const labels = ['Min', 'Q1', 'Median', 'Q3', 'Max'];
+            return `${dataset.label} - ${labels[dataIndex]}: ${value.toFixed(2)}`;
+          }
+        }
+      }
     },
     scales: {
       x: {
         type: 'category',
         labels: Object.keys(data),
+        ticks: {
+          font: {
+            family: "'Inter', sans-serif",
+            size: 12
+          }
+        }
       },
       y: {
         beginAtZero: true,
+        ticks: {
+          font: {
+            family: "'Inter', sans-serif",
+            size: 12
+          }
+        }
       },
     },
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-4 rounded-md shadow-md">
+    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg">
       <Scatter options={options} data={chartData} />
     </div>
   )

@@ -1,56 +1,47 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 @layer base {
   .light-mode {
-    --background-color: #f3f4f6;
-    --foreground-color: #1f2937;
+    --background-color: #f0f4f8;
+    --foreground-color: #1e293b;
     --card-background-color: #ffffff;
-    --shadow-color: rgba(0, 0, 0, 0.1);
-    --font-family: 'Roboto', sans-serif;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+    --border-color: rgba(0, 0, 0, 0.1);
   }
-  
+
   .dark-mode {
-    --background-color: #111827;
-    --foreground-color: #f3f4f6;
-    --card-background-color: #1f2937;
-    --shadow-color: rgba(0, 0, 0, 0.3);
+    --background-color: #0f172a;
+    --foreground-color: #e2e8f0;
+    --card-background-color: #1e293b;
+    --shadow-color: rgba(0, 0, 0, 0.25);
     --border-color: rgba(255, 255, 255, 0.1);
-    --font-family: 'Poppins', sans-serif;
   }
-  
-  body.light-mode {
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     background-color: var(--background-color);
     color: var(--foreground-color);
-    font-family: var(--font-family);
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
-  
-  body.dark-mode {
-    background-color: var(--background-color);
-    color: var(--foreground-color);
-    font-family: var(--font-family);
-  }
-  
+
   .glass-card {
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
     border: 1px solid var(--border-color);
     background-color: var(--card-background-color);
-    box-shadow: 0 4px 12px var(--shadow-color);
+    box-shadow: 0 4px 16px var(--shadow-color);
   }
 }
 
 @layer components {
   .form-input {
-    @apply bg-white dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded-lg w-full;
+    @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-2 rounded-lg w-full;
     transition: background-color 0.3s ease, color 0.3s ease;
-    font-family: 'Roboto, sans-serif';
   }
 
   .button {
     @apply py-2 px-4 rounded font-semibold text-white transition;
-    font-family: 'Poppins, sans-serif';
   }
 }
