@@ -1,24 +1,5 @@
 import React from 'react'
-import { Bar } from 'react-chartjs-2'
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js'
-import BoxPlot from './BoxPlot'
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-)
+import BoxPlot from './Visualizer'
 
 export default function Dashboard({ result }) {
   if (!result || !result.visualizations) {
@@ -27,71 +8,15 @@ export default function Dashboard({ result }) {
 
   const { sentimentData, keywordData } = result.visualizations;
 
-  const keywordChartData = {
-    labels: Object.keys(keywordData),
-    datasets: [
-      {
-        label: 'Keyword Frequency',
-        data: Object.values(keywordData),
-        backgroundColor: 'rgba(59, 130, 246, 0.6)',
-        borderColor: 'rgba(59, 130, 246, 1)',
-        borderWidth: 1,
-      },
-    ],
-  }
-
-  const keywordChartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-        labels: {
-          font: {
-            family: "'Inter', sans-serif",
-            size: 12
-          }
-        }
-      },
-      title: {
-        display: true,
-        text: 'Keyword Frequency',
-        font: {
-          family: "'Inter', sans-serif",
-          size: 16,
-          weight: 'bold'
-        }
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: {
-          font: {
-            family: "'Inter', sans-serif",
-            size: 12
-          }
-        }
-      },
-      x: {
-        ticks: {
-          font: {
-            family: "'Inter', sans-serif",
-            size: 12
-          }
-        }
-      }
-    }
-  }
-
   return (
     <div className="space-y-8 p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
       <h2 className="text-3xl font-bold text-center mt-4 text-gray-800 dark:text-gray-100">Analysis Results 📊</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg">
-          <BoxPlot data={sentimentData} title="Sentiment Distribution 🎢" />
+          <BoxPlot data={sentimentData} title="Sentiment Distribution 🎢" type="boxplot" />
         </div>
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg">
-          <Bar options={keywordChartOptions} data={keywordChartData} />
+          <BoxPlot data={keywordData} title="Keyword Frequency" type="bar" />
         </div>
       </div>
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
