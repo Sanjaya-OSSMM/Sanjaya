@@ -7,8 +7,9 @@ import Visualize from '../components/VisualizationTab'
 
 export default function Home() {
   const [analysisResult, setAnalysisResult] = useState(null)
+  const [visualizationData, setVisualizationData] = useState(null)
   const [platform, setPlatform] = useState('')
-  const [view, setView] = useState('dashboard') // new state for view
+  const [view, setView] = useState('dashboard')
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -18,6 +19,24 @@ export default function Home() {
 
   const handleAnalysis = (result) => {
     setAnalysisResult(result)
+    setVisualizationData({
+      content: result.content,
+      totalPosts: result.content.length
+    })
+  }
+
+  const handleVisualize = (selectedPosts) => {
+    const postsToVisualize = selectedPosts.length > 0 ? selectedPosts : analysisResult.content
+    setVisualizationData({
+      content: postsToVisualize,
+      totalPosts: analysisResult.content.length
+    })
+    setView('visualize')
+  }
+
+  const resetVisualization = () => {
+    setVisualizationData(null)
+    setView('dashboard')
   }
 
   if (!mounted) return null
@@ -29,7 +48,7 @@ export default function Home() {
         setTheme={setTheme} 
         platform={platform} 
         setPlatform={setPlatform}
-        setView={setView} // pass setView as a prop
+        setView={setView}
       />
       <div className="flex-1 p-8">
         <main>
@@ -37,9 +56,14 @@ export default function Home() {
             onAnalysis={handleAnalysis} 
             theme={theme} 
             platform={platform}
+            resetVisualization={resetVisualization}
           />
-          {view === 'dashboard' && analysisResult && <Dashboard result={analysisResult} />}
-          {view === 'visualize' && analysisResult && <Visualize result={analysisResult} />}
+          {view === 'dashboard' && analysisResult && 
+            <Dashboard result={analysisResult} onVisualize={handleVisualize} />
+          }
+          {view === 'visualize' && visualizationData && 
+            <Visualize result={visualizationData} />
+          }
         </main>
       </div>
     </div>
