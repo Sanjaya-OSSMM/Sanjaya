@@ -44,7 +44,7 @@ async function scrapeTelegram(keyword) {
                     peer: dialog,
                     q: keyword,
                     filter: new Api.InputMessagesFilterEmpty(),
-                    limit: 10,
+                    limit: 100,
                 })
             );
 

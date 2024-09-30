@@ -1,6 +1,15 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
 
-export default function Sidebar({ theme, setTheme, platform, setPlatform }) {
+export default function Sidebar({ theme, setTheme, platform, setPlatform, setView }) {
+  const [privacyWord, setPrivacyWord] = useState('');
+
+  const privacyWords = ['privacy', 'security', 'freedom', 'confidentiality', 'anonymity', 'data protection', 'transparency', 'trust', 'protection'];
+
+  useEffect(() => {
+    const randomWord = privacyWords[Math.floor(Math.random() * privacyWords.length)];
+    setPrivacyWord(randomWord);
+  }, []);
+
   return (
     <div className="w-64 bg-gray-100 dark:bg-gray-800 p-6 flex flex-col justify-between h-screen">
       <div>
@@ -35,6 +44,23 @@ export default function Sidebar({ theme, setTheme, platform, setPlatform }) {
             Telegram
           </button>
         </div>
+
+        {/* Add buttons for switching views */}
+        <div className="space-y-4 mt-8">
+          <h3 className="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-200">View</h3>
+          <button
+            onClick={() => setView('dashboard')}
+            className="w-full px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
+          >
+            Dashboard
+          </button>
+          <button
+            onClick={() => setView('visualize')}
+            className="w-full px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
+          >
+            Visualize
+          </button>
+        </div>
       </div>
       <div className="space-y-4">
         <button
@@ -45,7 +71,7 @@ export default function Sidebar({ theme, setTheme, platform, setPlatform }) {
           {theme === 'dark' ? '🌞' : '🌙'}
         </button>
         <div className="text-sm text-center mt-1 text-gray-600 dark:text-gray-400">
-          <p>Built with ❤️ </p>
+          <p>Built with {privacyWord} </p>
           <p>Rasenkai © {new Date().getFullYear()}</p>
         </div>
       </div>

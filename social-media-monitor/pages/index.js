@@ -3,10 +3,12 @@ import { useTheme } from 'next-themes'
 import InputForm from '../components/InputForm'
 import Dashboard from '../components/Dashboard'
 import Sidebar from '../components/Sidebar'
+import Visualize from '../components/VisualizationTab'
 
 export default function Home() {
   const [analysisResult, setAnalysisResult] = useState(null)
   const [platform, setPlatform] = useState('')
+  const [view, setView] = useState('dashboard') // new state for view
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -27,6 +29,7 @@ export default function Home() {
         setTheme={setTheme} 
         platform={platform} 
         setPlatform={setPlatform}
+        setView={setView} // pass setView as a prop
       />
       <div className="flex-1 p-8">
         <main>
@@ -35,7 +38,8 @@ export default function Home() {
             theme={theme} 
             platform={platform}
           />
-          {analysisResult && <Dashboard result={analysisResult} />}
+          {view === 'dashboard' && analysisResult && <Dashboard result={analysisResult} />}
+          {view === 'visualize' && analysisResult && <Visualize result={analysisResult} />}
         </main>
       </div>
     </div>
