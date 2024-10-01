@@ -1,47 +1,20 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 @layer base {
-  .light-mode {
-    --background-color: #f0f4f8;
-    --foreground-color: #1e293b;
-    --card-background-color: #ffffff;
-    --shadow-color: rgba(0, 0, 0, 0.08);
-    --border-color: rgba(0, 0, 0, 0.1);
-  }
-
-  .dark-mode {
-    --background-color: #0f172a;
-    --foreground-color: #e2e8f0;
-    --card-background-color: #1e293b;
-    --shadow-color: rgba(0, 0, 0, 0.25);
-    --border-color: rgba(255, 255, 255, 0.1);
-  }
-
   body {
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background-color: var(--background-color);
-    color: var(--foreground-color);
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-
-  .glass-card {
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--border-color);
-    background-color: var(--card-background-color);
-    box-shadow: 0 4px 16px var(--shadow-color);
+    @apply font-inter bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100;
   }
 }
 
 @layer components {
-  .form-input {
-    @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-2 rounded-lg w-full;
-    transition: background-color 0.3s ease, color 0.3s ease;
+  .glass-card {
+    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border border-gray-200 dark:border-gray-700 shadow-lg;
   }
-
+  
   .button {
-    @apply py-2 px-4 rounded font-semibold text-white transition;
+    @apply py-2 px-4 rounded font-semibold text-white transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2;
   }
 }

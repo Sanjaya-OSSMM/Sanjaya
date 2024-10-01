@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import axios from 'axios'
 
-export default function InputForm({ onAnalysis, theme, platform }) {
+export default function InputForm({ onAnalysis, platform }) {
   const [keyword, setKeyword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
@@ -24,23 +24,19 @@ export default function InputForm({ onAnalysis, theme, platform }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="glass-card p-6 rounded-lg shadow-lg bg-white dark:bg-gray-800">
+    <form onSubmit={handleSubmit} className="glass-card p-6 rounded-lg shadow-lg mb-8">
       <div className="flex space-x-4">
         <input
           type="text"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           placeholder="Enter Keyword"
-          className="form-input flex-grow bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-4 focus:ring-blue-500 dark:focus:ring-blue-400 focus:outline-none transition ease-in-out duration-150"
+          className="flex-grow px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
           required
         />
         <button
           type="submit"
-          className={`button px-6 py-2 rounded-lg font-bold text-lg transition-colors focus:outline-none focus:ring-4 focus:ring-opacity-50 ${
-            theme === 'dark' 
-            ? 'bg-blue-500 text-white'
-            : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-blue-900' 
-            }`}
+          className="button bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500"
           disabled={isLoading}
         >
           {isLoading ? 'Searching...' : 'Search'}

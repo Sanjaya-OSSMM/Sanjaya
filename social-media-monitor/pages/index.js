@@ -42,7 +42,7 @@ export default function Home() {
   if (!mounted) return null
 
   return (
-    <div className={`flex min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'dark-mode' : 'light-mode'}`}>
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar 
         theme={theme} 
         setTheme={setTheme} 
@@ -54,7 +54,6 @@ export default function Home() {
         <main>
           <InputForm 
             onAnalysis={handleAnalysis} 
-            theme={theme} 
             platform={platform}
             resetVisualization={resetVisualization}
           />

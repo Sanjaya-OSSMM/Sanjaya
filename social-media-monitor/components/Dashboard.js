@@ -45,28 +45,20 @@ export default function Dashboard({ result, onVisualize }) {
   };
 
   return (
-    <div className="space-y-8 p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+    <div className="space-y-8 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
       <div className="flex items-center justify-between">
         <button
           onClick={goToPreviousPage}
           disabled={currentPage === 1}
-          className={`px-4 py-2 rounded transition-colors ${
-            currentPage === 1
-              ? 'bg-gray-300 text-gray-500'
-              : 'bg-blue-500 text-white hover:bg-blue-600'
-          }`}
+          className="button bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500"
         >
           Previous
         </button>
-        <h2 className="text-3xl font-bold text-center mt-4 text-gray-800 dark:text-gray-100">Content Posts 📄</h2>
+        <h2 className="text-3xl font-bold text-center mt-4">Content Posts 📄</h2>
         <button
           onClick={goToNextPage}
           disabled={currentPage === totalPages}
-          className={`px-4 py-2 rounded transition-colors ${
-            currentPage === totalPages
-              ? 'bg-gray-300 text-gray-500'
-              : 'bg-blue-500 text-white hover:bg-blue-600'
-          }`}
+          className="button bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500"
         >
           Next
         </button>
@@ -79,14 +71,14 @@ export default function Dashboard({ result, onVisualize }) {
       <div className="flex justify-between items-center">
         <button
           onClick={() => setSelectMode(!selectMode)}
-          className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600 transition-colors"
+          className="button bg-green-500 hover:bg-green-600"
         >
           {selectMode ? 'Cancel Selection' : 'Select Posts'}
         </button>
         {selectMode && (
           <button
             onClick={handleSubmitSelected}
-            className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+            className="button bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500"
             disabled={selectedPosts.length === 0}
           >
             Visualize Selected ({selectedPosts.length})
@@ -98,7 +90,7 @@ export default function Dashboard({ result, onVisualize }) {
         {currentPosts.map((post, index) => (
           <div
             key={index}
-            className={`border rounded-lg p-4 bg-gray-50 dark:bg-gray-700 shadow-md ${
+            className={`glass-card p-4 ${
               selectMode && selectedPosts.includes(post)
                 ? 'border-blue-500 dark:border-blue-400'
                 : 'border-gray-300 dark:border-gray-600'
@@ -115,7 +107,7 @@ export default function Dashboard({ result, onVisualize }) {
                 />
               </div>
             )}
-            <p className="font-bold text-gray-800 dark:text-gray-100 mb-2">{post.text}</p>
+            <p className="font-bold mb-2">{post.text}</p>
             {post.author && <p className="text-gray-600 dark:text-gray-300">Author: {post.author}</p>}
             {post.group_name && <p className="text-gray-600 dark:text-gray-300">Group/Channel: {post.group_name}</p>}
           </div>

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useTheme } from 'next-themes';
 
-export default function Sidebar({ theme, setTheme, platform, setPlatform, setView }) {
+export default function Sidebar({ platform, setPlatform, setView }) {
   const [privacyWord, setPrivacyWord] = useState('');
+  const { theme, setTheme } = useTheme();
 
   const privacyWords = ['privacy', 'security', 'freedom', 'confidentiality', 'anonymity', 'data protection', 'transparency', 'trust', 'protection'];
 
@@ -11,10 +13,10 @@ export default function Sidebar({ theme, setTheme, platform, setPlatform, setVie
   }, []);
 
   return (
-    <div className="w-64 bg-gray-100 dark:bg-gray-800 p-6 flex flex-col justify-between h-screen">
+    <div className="w-64 bg-white dark:bg-gray-800 p-6 flex flex-col justify-between h-screen">
       <div>
         <header className="mb-8">
-          <h1 className="text-4xl font-bold text-center text-gray-800 dark:text-gray-100">
+          <h1 className="text-4xl font-bold text-center">
             Sanjaya 🔍
           </h1>
           <h2 className="text-sm font-semibold text-center mt-1 text-gray-600 dark:text-gray-300">
@@ -22,13 +24,13 @@ export default function Sidebar({ theme, setTheme, platform, setPlatform, setVie
           </h2>
         </header>
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-200">Platform</h3>
+          <h3 className="text-lg font-semibold mb-2">Platform</h3>
           <button
             onClick={() => setPlatform('twitter')}
             className={`w-full px-4 py-2 rounded transition-colors ${
               platform === 'twitter'
                 ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-blue-900'
+                : 'bg-gray-200 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-blue-900'
             }`}
           >
             Twitter
@@ -38,25 +40,24 @@ export default function Sidebar({ theme, setTheme, platform, setPlatform, setVie
             className={`w-full px-4 py-2 rounded transition-colors ${
               platform === 'telegram'
                 ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-blue-900'
+                : 'bg-gray-200 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-blue-900'
             }`}
           >
             Telegram
           </button>
         </div>
 
-        {/* Add buttons for switching views */}
         <div className="space-y-4 mt-8">
-          <h3 className="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-200">View</h3>
+          <h3 className="text-lg font-semibold mb-2">View</h3>
           <button
             onClick={() => setView('dashboard')}
-            className="w-full px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
+            className="w-full px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
           >
             Dashboard
           </button>
           <button
             onClick={() => setView('visualize')}
-            className="w-full px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
+            className="w-full px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
           >
             Visualize
           </button>
@@ -65,7 +66,7 @@ export default function Sidebar({ theme, setTheme, platform, setPlatform, setVie
       <div className="space-y-4">
         <button
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className="w-full px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          className="w-full px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
         >
           {theme === 'dark' ? '🌞' : '🌙'}

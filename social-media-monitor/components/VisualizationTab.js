@@ -32,7 +32,7 @@ export default function Visualize({ result }) {
   }, {});
 
   return (
-    <div className="space-y-8 p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+    <div className="space-y-8 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
       <h2 className="text-3xl font-bold text-center mt-4 text-gray-800 dark:text-gray-100">
         Analysis Results 📊
         {result.content.length !== result.totalPosts && (
@@ -42,13 +42,13 @@ export default function Visualize({ result }) {
         )}
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg">
+        <div className="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg">
           <SentimentDistribution data={sentimentData} title="Sentiment Distribution 🎢" />
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg">
+        <div className="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg">
           <KeywordFrequency data={keywordData} title="Keyword Frequency 🎢" />
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg col-span-2">
+        <div className="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg col-span-2">
           <TopAuthors data={authorData} title="Top Authors ✍️" />
         </div>
       </div>
