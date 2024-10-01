@@ -1,5 +1,9 @@
-import React from 'react'
-import BoxPlot from './Visualizer'
+import React from 'react';
+import { 
+  SentimentDistribution, 
+  KeywordFrequency,
+  TopAuthors
+} from './Visualizer';
 
 export default function Visualize({ result }) {
   if (!result || !result.content || result.content.length === 0) {
@@ -7,15 +11,23 @@ export default function Visualize({ result }) {
   }
 
   // Prepare data for visualization
-  const sentimentData = result.content.reduce((acc, post) => {
-    acc[post.platform] = (acc[post.platform] || []).concat(post.sentiment);
+  const sentimentData = result.content.map(post => ({
+    sentiment: post.sentiment || 'Neutral', // Provide a default if sentiment is missing
+    timestamp: new Date(post.timestamp)
+  }));
+
+  const keywordData = result.content.reduce((acc, post) => {
+    if (post.keywords) {
+      post.keywords.forEach(keyword => {
+        acc[keyword] = (acc[keyword] || 0) + 1;
+      });
+    }
     return acc;
   }, {});
 
-  const keywordData = result.content.reduce((acc, post) => {
-    post.keywords.forEach(keyword => {
-      acc[keyword] = (acc[keyword] || 0) + 1;
-    });
+  const authorData = result.content.reduce((acc, post) => {
+    const author = post.author || 'Unknown Author'; // Default to avoid issues with missing author
+    acc[author] = (acc[author] || 0) + 1;
     return acc;
   }, {});
 
@@ -31,10 +43,13 @@ export default function Visualize({ result }) {
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg">
-          <BoxPlot data={sentimentData} title="Sentiment Distribution 🎢" type="boxplot" />
+          <SentimentDistribution data={sentimentData} title="Sentiment Distribution 🎢" />
         </div>
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg">
-          <BoxPlot data={keywordData} title="Keyword Frequency" type="bar" />
+          <KeywordFrequency data={keywordData} title="Keyword Frequency 🎢" />
+        </div>
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg col-span-2">
+          <TopAuthors data={authorData} title="Top Authors ✍️" />
         </div>
       </div>
     </div>

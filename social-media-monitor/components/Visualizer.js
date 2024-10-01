@@ -1,144 +1,81 @@
-import React from 'react'
-import { Scatter, Bar } from 'react-chartjs-2'
+import React from 'react';
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js'
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+} from 'recharts';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-)
+// Sentiment Distribution Chart
+export const SentimentDistribution = ({ data, title }) => {
+  const sentimentCounts = data.reduce((acc, { sentiment }) => {
+    acc[sentiment] = (acc[sentiment] || 0) + 1;
+    return acc;
+  }, {});
 
-function calculateBoxPlotData(data) {
-  const sortedData = data.sort((a, b) => a - b)
-  const q1 = sortedData[Math.floor(sortedData.length / 4)]
-  const median = sortedData[Math.floor(sortedData.length / 2)]
-  const q3 = sortedData[Math.floor((sortedData.length * 3) / 4)]
-  const min = sortedData[0]
-  const max = sortedData[sortedData.length - 1]
-  return { min, q1, median, q3, max }
-}
+  const chartData = Object.entries(sentimentCounts).map(([sentiment, count]) => ({
+    sentiment,
+    count,
+  }));
 
-export default function BoxPlot({ data, title, type }) {
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-        labels: {
-          font: {
-            family: "'Inter', sans-serif",
-            size: 12
-          }
-        }
-      },
-      title: {
-        display: true,
-        text: title,
-        font: {
-          family: "'Inter', sans-serif",
-          size: 16,
-          weight: 'bold'
-        }
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: {
-          font: {
-            family: "'Inter', sans-serif",
-            size: 12
-          }
-        }
-      },
-      x: {
-        ticks: {
-          font: {
-            family: "'Inter', sans-serif",
-            size: 12
-          }
-        }
-      }
-    }
-  }
+  return (
+    <div>
+      <h3 className="text-xl font-semibold text-center mb-4 text-gray-800 dark:text-gray-100">{title}</h3>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="sentiment" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="count" fill="#8884d8" />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
 
-  if (type === 'boxplot') {
-    const datasets = Object.entries(data).map(([platform, sentiments], index) => {
-      const { min, q1, median, q3, max } = calculateBoxPlotData(sentiments)
-      return {
-        label: platform,
-        data: [
-          { x: index, y: min },
-          { x: index, y: q1 },
-          { x: index, y: median },
-          { x: index, y: q3 },
-          { x: index, y: max },
-        ],
-        backgroundColor: `hsl(${index * 60}, 70%, 50%)`,
-        borderColor: `hsl(${index * 60}, 70%, 40%)`,
-        borderWidth: 1,
-        pointRadius: 6,
-        pointHoverRadius: 8,
-      }
-    })
+// Keyword Frequency Chart
+export const KeywordFrequency = ({ data, title }) => {
+  const sortedData = Object.entries(data)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([keyword, count]) => ({ keyword, count }));
 
-    const chartData = { datasets }
+  return (
+    <div>
+      <h3 className="text-xl font-semibold text-center mb-4 text-gray-800 dark:text-gray-100">{title}</h3>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={sortedData} layout="vertical">
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis type="number" />
+          <YAxis dataKey="keyword" type="category" />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="count" fill="#82ca9d" />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
 
-    options.plugins.tooltip = {
-      callbacks: {
-        label: (context) => {
-          const dataIndex = context.dataIndex;
-          const dataset = context.dataset;
-          const value = dataset.data[dataIndex].y;
-          const labels = ['Min', 'Q1', 'Median', 'Q3', 'Max'];
-          return `${dataset.label} - ${labels[dataIndex]}: ${value.toFixed(2)}`;
-        }
-      }
-    }
+// Top Authors Chart
+export const TopAuthors = ({ data, title }) => {
+  const sortedData = Object.entries(data)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([author, count]) => ({ author, count }));
 
-    options.scales.x.type = 'category'
-    options.scales.x.labels = Object.keys(data)
-
-    return (
-      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg">
-        <Scatter options={options} data={chartData} />
-      </div>
-    )
-  } else if (type === 'bar') {
-    const chartData = {
-      labels: Object.keys(data),
-      datasets: [
-        {
-          label: 'Keyword Frequency',
-          data: Object.values(data),
-          backgroundColor: 'rgba(59, 130, 246, 0.6)',
-          borderColor: 'rgba(59, 130, 246, 1)',
-          borderWidth: 1,
-        },
-      ],
-    }
-
-    return (
-      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg">
-        <Bar options={options} data={chartData} />
-      </div>
-    )
-  }
-
-  return null
-}
+  return (
+    <div>
+      <h3 className="text-xl font-semibold text-center mb-4 text-gray-800 dark:text-gray-100">{title}</h3>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={sortedData} layout="vertical">
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis type="number" />
+          <YAxis dataKey="author" type="category" />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="count" fill="#ffc658" />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
