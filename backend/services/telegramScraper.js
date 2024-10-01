@@ -1,21 +1,20 @@
 const { TelegramClient } = require('telegram');
 const { StringSession } = require('telegram/sessions');
-const input = require('input'); // npm install input
+const input = require('input');
 const fs = require('fs');
 const { Api, errors } = require('telegram');
 
 const apiId = 000;
 const apiHash = '';
 
-// Load session string from a file if it exists
 let savedSession = '';
 if (fs.existsSync('session.txt')) {
     savedSession = fs.readFileSync('session.txt', 'utf8');
 }
 
-const stringSession = new StringSession(savedSession); // Load saved session string
+const stringSession = new StringSession(savedSession);
 
-async function scrapeTelegram(keyword) {
+async function scrapeTelegram(keyword, postLimit = 100) {
     const client = new TelegramClient(stringSession, apiId, apiHash, {
         connectionRetries: 5,
     });
@@ -28,13 +27,9 @@ async function scrapeTelegram(keyword) {
     });
 
     console.log('You are logged in!');
-
-    // Save the session string after login
     fs.writeFileSync('session.txt', client.session.save(), 'utf8');
 
     let messages = [];
-
-    // Get dialogs (chats, channels, etc.)
     const dialogs = await client.getDialogs({ limit: 8 });
 
     for (const dialog of dialogs) {
@@ -44,26 +39,33 @@ async function scrapeTelegram(keyword) {
                     peer: dialog,
                     q: keyword,
                     filter: new Api.InputMessagesFilterEmpty(),
-                    limit: 100,
+                    limit: postLimit,
                 })
             );
 
-            // Extract group/channel username or title
             const dialogName = dialog.entity.username ? `@${dialog.entity.username}` : dialog.name || dialog.title;
 
             for (const message of searchResult.messages) {
                 if (message.message && message.fromId && message.fromId.userId) {
                     messages.push({
-                        group_name: dialogName,  // Replace with group or channel username
+                        group_name: dialogName,
                         author: message.fromId.userId.toString(),
                         text: message.message,
                     });
                 }
+
+                if (messages.length >= postLimit) {
+                    break;
+                }
+            }
+
+            if (messages.length >= postLimit) {
+                break;
             }
         } catch (e) {
             if (e instanceof errors.FloodWaitError) {
                 console.log(`Sleeping for ${e.seconds} seconds due to rate limit.`);
-                await sleep(e.seconds * 1000);
+                await new Promise(resolve => setTimeout(resolve, e.seconds * 1000));
             } else {
                 console.log(`Error searching in ${dialog.name || dialog.title}: ${e.message}`);
             }
@@ -71,7 +73,7 @@ async function scrapeTelegram(keyword) {
     }
 
     await client.disconnect();
-    return messages;
+    return messages.slice(0, postLimit);
 }
 
 module.exports = { scrapeTelegram };

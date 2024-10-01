@@ -10,6 +10,7 @@ export default function Home() {
   const [visualizationData, setVisualizationData] = useState(null)
   const [platform, setPlatform] = useState('')
   const [view, setView] = useState('dashboard')
+  const [postLimit, setPostLimit] = useState(100)
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -39,6 +40,10 @@ export default function Home() {
     setView('dashboard')
   }
 
+  const handlePostLimitChange = (limit) => {
+    setPostLimit(limit)
+  }
+
   if (!mounted) return null
 
   return (
@@ -56,9 +61,15 @@ export default function Home() {
             onAnalysis={handleAnalysis} 
             platform={platform}
             resetVisualization={resetVisualization}
+            postLimit={postLimit}
+            onPostLimitChange={handlePostLimitChange}
           />
           {view === 'dashboard' && analysisResult && 
-            <Dashboard result={analysisResult} onVisualize={handleVisualize} />
+            <Dashboard 
+              result={analysisResult} 
+              onVisualize={handleVisualize} 
+              postLimit={postLimit}
+            />
           }
           {view === 'visualize' && visualizationData && 
             <Visualize result={visualizationData} />

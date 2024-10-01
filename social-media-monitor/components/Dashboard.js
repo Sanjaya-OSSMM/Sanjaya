@@ -9,26 +9,28 @@ export default function Dashboard({ result, onVisualize }) {
   useEffect(() => {
     setSelectedPosts([]);
     setSelectMode(false);
+    setCurrentPage(1);
   }, [result]);
 
   if (!result || !result.content || result.content.length === 0) {
     return <div className="text-center text-gray-600 dark:text-gray-400 mt-8">No content available</div>;
   }
 
-  const totalPages = Math.ceil(result.content.length / postsPerPage);
+  const totalPosts = result.content.length;
+  const totalPages = Math.ceil(totalPosts / postsPerPage);
   const startIndex = (currentPage - 1) * postsPerPage;
-  const endIndex = startIndex + postsPerPage;
+  const endIndex = Math.min(startIndex + postsPerPage, totalPosts);
   const currentPosts = result.content.slice(startIndex, endIndex);
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
+      setCurrentPage(prev => prev + 1);
     }
   };
 
   const goToPreviousPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+      setCurrentPage(prev => prev - 1);
     }
   };
 
@@ -65,7 +67,7 @@ export default function Dashboard({ result, onVisualize }) {
       </div>
 
       <div className="text-center text-gray-600 dark:text-gray-300 mt-2">
-        Page {currentPage} of {totalPages}
+        Page {currentPage} of {totalPages} | Showing posts {startIndex + 1}-{endIndex} of {totalPosts}
       </div>
 
       <div className="flex justify-between items-center">
@@ -89,7 +91,7 @@ export default function Dashboard({ result, onVisualize }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         {currentPosts.map((post, index) => (
           <div
-            key={index}
+            key={startIndex + index}
             className={`glass-card p-4 ${
               selectMode && selectedPosts.includes(post)
                 ? 'border-blue-500 dark:border-blue-400'
@@ -110,6 +112,8 @@ export default function Dashboard({ result, onVisualize }) {
             <p className="font-bold mb-2">{post.text}</p>
             {post.author && <p className="text-gray-600 dark:text-gray-300">Author: {post.author}</p>}
             {post.group_name && <p className="text-gray-600 dark:text-gray-300">Group/Channel: {post.group_name}</p>}
+            <p className="text-gray-600 dark:text-gray-300">Sentiment: {post.sentiment.toFixed(2)}</p>
+            <p className="text-gray-600 dark:text-gray-300">Keywords: {post.keywords.join(', ')}</p>
           </div>
         ))}
       </div>
