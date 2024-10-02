@@ -4,6 +4,7 @@ import InputForm from '../components/InputForm'
 import Dashboard from '../components/Dashboard'
 import Sidebar from '../components/Sidebar'
 import Visualize from '../components/VisualizationTab'
+import FilterDialog from '../components/FilterDialog'
 
 export default function Home() {
   const [analysisResult, setAnalysisResult] = useState(null)
@@ -13,6 +14,14 @@ export default function Home() {
   const [postLimit, setPostLimit] = useState(100)
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false)
+  const [filterOptions, setFilterOptions] = useState({
+    username: '',
+    userId: '',
+    groupName: '',
+    groupUsername: '',
+    operators: [],
+  })
 
   useEffect(() => {
     setMounted(true)
@@ -44,6 +53,11 @@ export default function Home() {
     setPostLimit(limit)
   }
 
+  const handleApplyFilters = (newFilters) => {
+    setFilterOptions(newFilters)
+    setIsFilterDialogOpen(false)
+  }
+
   if (!mounted) return null
 
   return (
@@ -63,6 +77,8 @@ export default function Home() {
             resetVisualization={resetVisualization}
             postLimit={postLimit}
             onPostLimitChange={handlePostLimitChange}
+            onOpenFilterDialog={() => setIsFilterDialogOpen(true)}
+            filterOptions={filterOptions}
           />
           {view === 'dashboard' && analysisResult && 
             <Dashboard 
@@ -76,6 +92,12 @@ export default function Home() {
           }
         </main>
       </div>
+      <FilterDialog
+        isOpen={isFilterDialogOpen}
+        onClose={() => setIsFilterDialogOpen(false)}
+        onApply={handleApplyFilters}
+        initialFilters={filterOptions}
+      />
     </div>
   )
 }

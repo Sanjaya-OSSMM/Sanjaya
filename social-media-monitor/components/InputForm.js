@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import axios from 'axios'
 
-export default function InputForm({ onAnalysis, platform, postLimit, onPostLimitChange }) {
+export default function InputForm({ onAnalysis, platform, postLimit, onPostLimitChange, onOpenFilterDialog, filterOptions }) {
   const [keyword, setKeyword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [includeMedia, setIncludeMedia] = useState(false)
@@ -18,7 +18,8 @@ export default function InputForm({ onAnalysis, platform, postLimit, onPostLimit
         platform, 
         keyword, 
         postLimit,
-        includeMedia 
+        includeMedia,
+        filterOptions 
       })
       onAnalysis(response.data)
     } catch (error) {
@@ -41,16 +42,26 @@ export default function InputForm({ onAnalysis, platform, postLimit, onPostLimit
           required
         />
         {platform === 'telegram' && (
-          <select
-            value={postLimit}
-            onChange={(e) => onPostLimitChange(Number(e.target.value))}
-            className="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
-          >
-            <option value={10}>10 posts</option>
-            <option value={50}>50 posts</option>
-            <option value={100}>100 posts</option>
-            <option value={200}>200 posts</option>
-          </select>
+          <>
+            <select
+              value={postLimit}
+              onChange={(e) => onPostLimitChange(Number(e.target.value))}
+              className="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+            >
+              <option value={10}>10 posts</option>
+              <option value={50}>50 posts</option>
+              <option value={100}>100 posts</option>
+              <option value={200}>200 posts</option>
+            </select>
+            
+            <button
+              type="button"
+              onClick={onOpenFilterDialog}
+              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+            >
+              Filters
+            </button>
+          </>
         )}
         <button
           type="submit"

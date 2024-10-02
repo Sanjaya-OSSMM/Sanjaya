@@ -4,6 +4,7 @@ const input = require('input');
 const fs = require('fs');
 const { Api, errors } = require('telegram');
 const { handleMedia } = require('./telegramMedia.js');
+const { createTelegramFilter, parseKeywordWithOperators, applyCustomFilters } = require('./telegramFilters');
 
 const apiId = 0000;
 const apiHash = '';
@@ -15,7 +16,7 @@ if (fs.existsSync('session.txt')) {
 
 const stringSession = new StringSession(savedSession);
 
-async function scrapeTelegram(keyword, postLimit = 100, includeMedia = false) {
+async function scrapeTelegram(keyword, postLimit = 100, includeMedia = false, filterOptions = {}) {
     const client = new TelegramClient(stringSession, apiId, apiHash, {
         connectionRetries: 5,
     });
@@ -36,27 +37,57 @@ async function scrapeTelegram(keyword, postLimit = 100, includeMedia = false) {
     }
 
     let messages = [];
-    const dialogs = await client.getDialogs({ limit: 8 });
+    const dialogs = await client.getDialogs({ limit: 50 });
 
     for (const dialog of dialogs) {
         try {
-            console.log(`Searching in dialog: ${dialog.name || dialog.title}`);
+            const entity = await client.getEntity(dialog.entity);
+            const dialogName = entity.title || entity.firstName || '';
+            const dialogUsername = entity.username || '';
+            
+            // Apply group name and username filters
+            if (filterOptions.groupUsername && dialogUsername.toLowerCase() !== filterOptions.groupUsername.toLowerCase().replace('@', '')) {
+                console.log(`Skipping dialog: @${dialogUsername} (doesn't match group username filter)`);
+                continue;
+            }
+
+            if (filterOptions.groupName && !dialogName.toLowerCase().includes(filterOptions.groupName.toLowerCase())) {
+                console.log(`Skipping dialog: ${dialogName} (doesn't match group name filter)`);
+                continue;
+            }
+
+            console.log(`Searching in dialog: ${dialogName} (@${dialogUsername})`);
             const remainingLimit = postLimit - messages.length;
+            const filter = createTelegramFilter(filterOptions);
+            const parsedKeyword = parseKeywordWithOperators(keyword, filterOptions.operators);
+
             const searchResult = await client.invoke(
                 new Api.messages.Search({
                     peer: dialog.inputEntity,
-                    q: keyword,
-                    filter: includeMedia ? new Api.InputMessagesFilterPhotoVideo() : new Api.InputMessagesFilterEmpty(),
+                    q: parsedKeyword,
+                    filter: includeMedia ? new Api.InputMessagesFilterPhotoVideo() : filter,
                     limit: remainingLimit,
                 })
             );
 
             console.log(`Found ${searchResult.messages.length} messages in this dialog`);
 
-            const dialogName = dialog.entity.username ? `@${dialog.entity.username}` : dialog.name || dialog.title;
-
             for (const message of searchResult.messages) {
-                if (message.message && message.fromId && message.fromId.userId) {
+                if (message.message) {
+                    let sender;
+                    try {
+                        sender = message.fromId ? await client.getEntity(message.fromId) : null;
+                    } catch (error) {
+                        console.error('Error fetching sender:', error);
+                        sender = null;
+                    }
+                    
+                    // Apply custom filters
+                    if (!applyCustomFilters(message, sender, filterOptions)) {
+                        console.log('Message filtered out by custom filters');
+                        continue;
+                    }
+
                     let mediaInfo = null;
 
                     if (includeMedia && message.media) {
@@ -72,13 +103,18 @@ async function scrapeTelegram(keyword, postLimit = 100, includeMedia = false) {
 
                     messages.push({
                         group_name: dialogName,
-                        author: message.fromId.userId ? message.fromId.userId.toString() : 'Unknown',
+                        group_username: dialogUsername,
+                        author: sender ? (sender.username || sender.firstName || 'Unknown') : 'Unknown',
+                        author_id: sender ? sender.id.toString() : 'Unknown',
                         text: message.message,
                         media: mediaInfo,
                         timestamp: new Date(message.date * 1000).getTime(),
                     });
 
+                    console.log(`Added message from: ${messages[messages.length - 1].author}`);
+
                     if (messages.length >= postLimit) {
+                        console.log(`Reached post limit of ${postLimit}`);
                         break;
                     }
                 }
