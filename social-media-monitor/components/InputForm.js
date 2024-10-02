@@ -4,6 +4,7 @@ import axios from 'axios'
 export default function InputForm({ onAnalysis, platform, postLimit, onPostLimitChange }) {
   const [keyword, setKeyword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [includeMedia, setIncludeMedia] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -13,7 +14,12 @@ export default function InputForm({ onAnalysis, platform, postLimit, onPostLimit
     }
     setIsLoading(true)
     try {
-      const response = await axios.post('http://localhost:5000/api/monitor', { platform, keyword, postLimit })
+      const response = await axios.post('http://localhost:5000/api/monitor', { 
+        platform, 
+        keyword, 
+        postLimit,
+        includeMedia 
+      })
       onAnalysis(response.data)
     } catch (error) {
       console.error('Error:', error)
@@ -53,6 +59,18 @@ export default function InputForm({ onAnalysis, platform, postLimit, onPostLimit
         >
           {isLoading ? 'Searching...' : 'Search'}
         </button>
+      </div>
+      <div className="flex items-center mt-2">
+        <input
+          type="checkbox"
+          id="includeMedia"
+          checked={includeMedia}
+          onChange={(e) => setIncludeMedia(e.target.checked)}
+          className="mr-2"
+        />
+        <label htmlFor="includeMedia" className="text-sm text-gray-600 dark:text-gray-400">
+          Include media in search results
+        </label>
       </div>
       {platform && (
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">

@@ -46,6 +46,31 @@ export default function Dashboard({ result, onVisualize }) {
     setSelectedPosts([]);
   };
 
+  const renderMedia = (post) => {
+    if (post.media && post.media.type && post.media.data) {
+      switch (post.media.type) {
+        case 'video':
+          return (
+            <video controls className="w-full h-auto mb-2">
+              <source src={post.media.data} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          );
+        case 'photo':
+          return (
+            <img 
+              src={post.media.data} 
+              alt="Post media" 
+              className="w-full h-auto mb-2 rounded-lg"
+            />
+          );
+        default:
+          return null;
+      }
+    }
+    return null;
+  };
+
   return (
     <div className="space-y-8 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
       <div className="flex items-center justify-between">
@@ -109,6 +134,7 @@ export default function Dashboard({ result, onVisualize }) {
                 />
               </div>
             )}
+            {renderMedia(post)}
             <p className="font-bold mb-2">{post.text}</p>
             {post.author && <p className="text-gray-600 dark:text-gray-300">Author: {post.author}</p>}
             {post.group_name && <p className="text-gray-600 dark:text-gray-300">Group/Channel: {post.group_name}</p>}
