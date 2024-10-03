@@ -1,34 +1,33 @@
-import { useState } from 'react'
-import axios from 'axios'
+import { useState } from 'react';
+import axios from 'axios';
+import { FiFilter, FiSearch } from 'react-icons/fi';
 
 export default function InputForm({ onAnalysis, platform, postLimit, onPostLimitChange, onOpenFilterDialog, filterOptions }) {
-  const [keyword, setKeyword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [includeMedia, setIncludeMedia] = useState(false)
+  const [keyword, setKeyword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!platform) {
-      alert('Please select a platform before searching.')
-      return
+      alert('Please select a platform before searching.');
+      return;
     }
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const response = await axios.post('http://localhost:5000/api/monitor', { 
         platform, 
         keyword, 
         postLimit,
-        includeMedia,
-        filterOptions 
-      })
-      onAnalysis(response.data)
+        ...filterOptions
+      });
+      onAnalysis(response.data);
     } catch (error) {
-      console.error('Error:', error)
-      alert('An error occurred while searching. Please try again.')
+      console.error('Error:', error);
+      alert('An error occurred while searching. Please try again.');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="glass-card p-6 rounded-lg shadow-lg mb-8">
@@ -53,38 +52,30 @@ export default function InputForm({ onAnalysis, platform, postLimit, onPostLimit
               <option value={100}>100 posts</option>
               <option value={200}>200 posts</option>
             </select>
-            
+
             <button
               type="button"
               onClick={onOpenFilterDialog}
-              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+              className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600 flex items-center justify-center"
+              aria-label="Open filter options"
             >
-              Filters
+              <FiFilter size={20} />
             </button>
           </>
         )}
         <button
           type="submit"
-          className="button bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500"
+          className="px-4 py-2 bg-blue-500 dark:bg-blue-700 hover:bg-blue-600 dark:hover:bg-blue-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 flex items-center justify-center disabled:bg-gray-300 disabled:text-gray-500"
           disabled={isLoading}
+          aria-label="Search"
         >
-          {isLoading ? 'Searching...' : 'Search'}
+          {isLoading ? (
+            'Searching...'
+          ) : (
+            <FiSearch size={20} />
+          )}
         </button>
       </div>
-      {platform === 'telegram' && (
-        <div className="flex items-center mt-2">
-          <input
-            type="checkbox"
-            id="includeMedia"
-            checked={includeMedia}
-            onChange={(e) => setIncludeMedia(e.target.checked)}
-            className="mr-2"
-          />
-          <label htmlFor="includeMedia" className="text-sm text-gray-600 dark:text-gray-400">
-            Include media in search results
-          </label>
-        </div>
-      )}
       {platform && (
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           Selected platform: <span className="font-semibold">{platform}</span>

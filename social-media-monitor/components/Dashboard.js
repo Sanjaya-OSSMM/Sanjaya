@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { FaChevronLeft, FaChevronRight, FaCheck } from 'react-icons/fa';
+import { MdContentPaste } from 'react-icons/md';
 
 export default function Dashboard({ result, onVisualize }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -77,17 +79,17 @@ export default function Dashboard({ result, onVisualize }) {
         <button
           onClick={goToPreviousPage}
           disabled={currentPage === 1}
-          className="button bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500"
+          className="flex items-center justify-center w-12 h-12 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500 rounded-full"
         >
-          Previous
+          <FaChevronLeft className="text-white" />
         </button>
-        <h2 className="text-3xl font-bold text-center mt-4">Content Posts 📄</h2>
+        <h2 className="text-3xl font-bold text-center mt-4">Content Posts <MdContentPaste className="inline-block ml-2" /></h2>
         <button
           onClick={goToNextPage}
           disabled={currentPage === totalPages}
-          className="button bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500"
+          className="flex items-center justify-center w-12 h-12 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500 rounded-full"
         >
-          Next
+          <FaChevronRight className="text-white" />
         </button>
       </div>
 
@@ -98,7 +100,7 @@ export default function Dashboard({ result, onVisualize }) {
       <div className="flex justify-between items-center">
         <button
           onClick={() => setSelectMode(!selectMode)}
-          className="button bg-green-500 hover:bg-green-600"
+          className="button bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500"
         >
           {selectMode ? 'Cancel Selection' : 'Select Posts'}
         </button>

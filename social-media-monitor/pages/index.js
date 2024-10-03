@@ -15,12 +15,14 @@ export default function Home() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false)
+  const [hasSearched, setHasSearched] = useState(false)
   const [filterOptions, setFilterOptions] = useState({
     username: '',
     userId: '',
     groupName: '',
     groupUsername: '',
     operators: [],
+    includeMedia: false,
   })
 
   useEffect(() => {
@@ -33,6 +35,7 @@ export default function Home() {
       content: result.content,
       totalPosts: result.content.length
     })
+    setHasSearched(true)
   }
 
   const handleVisualize = (selectedPosts) => {
@@ -68,6 +71,7 @@ export default function Home() {
         platform={platform} 
         setPlatform={setPlatform}
         setView={setView}
+        hasSearched={hasSearched}
       />
       <div className="flex-1 p-8">
         <main>

@@ -7,11 +7,13 @@ const router = express.Router();
 
 router.post('/monitor', async (req, res) => {
   try {
-    const { platform, keyword, postLimit, includeMedia, filterOptions } = req.body;
+    const { platform, keyword, postLimit, username, userId, groupName, groupUsername, operators, includeMedia } = req.body;
 
     if (!platform || !keyword) {
       return res.status(400).json({ error: 'Platform and keyword are required' });
     }
+
+    const filterOptions = { username, userId, groupName, groupUsername, operators };
 
     const content = await scrapeContent(platform, keyword, includeMedia, postLimit, filterOptions);
     const analysis = await analyzeContent(content);
