@@ -5,6 +5,7 @@ import Dashboard from '../components/Dashboard'
 import Sidebar from '../components/Sidebar'
 import Visualize from '../components/VisualizationTab'
 import FilterDialog from '../components/FilterDialog'
+import TranslationPage from '../components/TranslationPage'
 
 export default function Home() {
   const [analysisResult, setAnalysisResult] = useState(null)
@@ -24,6 +25,7 @@ export default function Home() {
     operators: [],
     includeMedia: false,
   })
+  const [postsToTranslate, setPostsToTranslate] = useState([])
 
   useEffect(() => {
     setMounted(true)
@@ -36,6 +38,7 @@ export default function Home() {
       totalPosts: result.content.length
     })
     setHasSearched(true)
+    setView('dashboard')  // Switch to dashboard view after analysis
   }
 
   const handleVisualize = (selectedPosts) => {
@@ -45,6 +48,11 @@ export default function Home() {
       totalPosts: analysisResult.content.length
     })
     setView('visualize')
+  }
+
+  const handleTranslate = (selectedPosts) => {
+    setPostsToTranslate(selectedPosts)
+    setView('translate')
   }
 
   const resetVisualization = () => {
@@ -61,7 +69,47 @@ export default function Home() {
     setIsFilterDialogOpen(false)
   }
 
+  const handlePlatformChange = (newPlatform) => {
+    setPlatform(newPlatform)
+    if (view === 'translate') {
+      setView('dashboard')
+    }
+  }
+
   if (!mounted) return null
+
+  const renderMainContent = () => {
+    switch (view) {
+      case 'dashboard':
+        return (
+          <>
+            <InputForm 
+              onAnalysis={handleAnalysis} 
+              platform={platform}
+              resetVisualization={resetVisualization}
+              postLimit={postLimit}
+              onPostLimitChange={handlePostLimitChange}
+              onOpenFilterDialog={() => setIsFilterDialogOpen(true)}
+              filterOptions={filterOptions}
+            />
+            {analysisResult && 
+              <Dashboard 
+                result={analysisResult} 
+                onVisualize={handleVisualize}
+                onTranslate={handleTranslate}
+                postLimit={postLimit}
+              />
+            }
+          </>
+        )
+      case 'visualize':
+        return visualizationData && <Visualize result={visualizationData} />
+      case 'translate':
+        return <TranslationPage postsToTranslate={postsToTranslate} />
+      default:
+        return null
+    }
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -69,31 +117,14 @@ export default function Home() {
         theme={theme} 
         setTheme={setTheme} 
         platform={platform} 
-        setPlatform={setPlatform}
+        setPlatform={handlePlatformChange}
+        view={view}
         setView={setView}
         hasSearched={hasSearched}
       />
       <div className="flex-1 p-8">
         <main>
-          <InputForm 
-            onAnalysis={handleAnalysis} 
-            platform={platform}
-            resetVisualization={resetVisualization}
-            postLimit={postLimit}
-            onPostLimitChange={handlePostLimitChange}
-            onOpenFilterDialog={() => setIsFilterDialogOpen(true)}
-            filterOptions={filterOptions}
-          />
-          {view === 'dashboard' && analysisResult && 
-            <Dashboard 
-              result={analysisResult} 
-              onVisualize={handleVisualize} 
-              postLimit={postLimit}
-            />
-          }
-          {view === 'visualize' && visualizationData && 
-            <Visualize result={visualizationData} />
-          }
+          {renderMainContent()}
         </main>
       </div>
       <FilterDialog

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FaChevronLeft, FaChevronRight, FaCheck } from 'react-icons/fa';
-import { MdContentPaste } from 'react-icons/md';
+import { MdContentPaste, MdTranslate } from 'react-icons/md';
 
-export default function Dashboard({ result, onVisualize }) {
+export default function Dashboard({ result, onVisualize, onTranslate }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPosts, setSelectedPosts] = useState([]);
   const [selectMode, setSelectMode] = useState(false);
@@ -42,8 +42,12 @@ export default function Dashboard({ result, onVisualize }) {
     );
   };
 
-  const handleSubmitSelected = () => {
-    onVisualize(selectedPosts);
+  const handleSubmitSelected = (action) => {
+    if (action === 'visualize') {
+      onVisualize(selectedPosts);
+    } else if (action === 'translate') {
+      onTranslate(selectedPosts);
+    }
     setSelectMode(false);
     setSelectedPosts([]);
   };
@@ -105,13 +109,23 @@ export default function Dashboard({ result, onVisualize }) {
           {selectMode ? 'Cancel Selection' : 'Select Posts'}
         </button>
         {selectMode && (
-          <button
-            onClick={handleSubmitSelected}
-            className="button bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500"
-            disabled={selectedPosts.length === 0}
-          >
-            Visualize Selected ({selectedPosts.length})
-          </button>
+          <div className="space-x-2">
+            <button
+              onClick={() => handleSubmitSelected('visualize')}
+              className="button bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500"
+              disabled={selectedPosts.length === 0}
+            >
+              Visualize Selected ({selectedPosts.length})
+            </button>
+            <button
+              onClick={() => handleSubmitSelected('translate')}
+              className="button bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:text-gray-500"
+              disabled={selectedPosts.length === 0}
+            >
+              <MdTranslate className="inline-block mr-2" />
+              Translate Selected ({selectedPosts.length})
+            </button>
+          </div>
         )}
       </div>
 
