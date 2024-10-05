@@ -6,6 +6,7 @@ import Sidebar from '../components/Sidebar/Sidebar'
 import Visualize from '../components/View/Visualization/VisualizationTab'
 import FilterDialog from '../components/Input/FilterDialog'
 import TranslationPage from '../components/Translation/TranslationPage'
+import CryptoTracker from '../components/CryptoTracker/CryptoTracker'
 
 export default function Home() {
   const [analysisResult, setAnalysisResult] = useState(null)
@@ -38,7 +39,7 @@ export default function Home() {
       totalPosts: result.content.length
     })
     setHasSearched(true)
-    setView('dashboard')  // Switch to dashboard view after analysis
+    setView('dashboard')
   }
 
   const handleVisualize = (selectedPosts) => {
@@ -106,6 +107,8 @@ export default function Home() {
         return visualizationData && <Visualize result={visualizationData} />
       case 'translate':
         return <TranslationPage postsToTranslate={postsToTranslate} />
+      case 'cryptoTracker':
+        return <CryptoTracker />
       default:
         return null
     }

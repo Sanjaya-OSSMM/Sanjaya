@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { BsFillMoonStarsFill, BsSunFill } from 'react-icons/bs';
-import { FaSearch } from 'react-icons/fa'; // Added for search icon
+import { FaSearch, FaBitcoin } from 'react-icons/fa';
 import Navigation from './Navigation';
 
 export default function Sidebar({ platform, setPlatform, view, setView, hasSearched }) {
@@ -35,6 +35,7 @@ export default function Sidebar({ platform, setPlatform, view, setView, hasSearc
           setView={setView} 
           hasSearched={hasSearched}
         />
+
       </div>
 
       <div className="space-y-4">

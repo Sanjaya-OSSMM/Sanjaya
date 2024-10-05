@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import { FaTwitter, FaTelegramPlane } from 'react-icons/fa';
+import { FaTwitter, FaTelegramPlane, FaBitcoin } from 'react-icons/fa';
 import { MdDashboard, MdTranslate } from 'react-icons/md';
 import { RiAppsLine } from 'react-icons/ri';
 import { HiOutlineViewBoards } from 'react-icons/hi';
@@ -88,6 +88,14 @@ export default function Navigation({ platform, setPlatform, view, setView, hasSe
         } hover:bg-blue-500 hover:text-white rounded`}
       >
         <MdTranslate size={20} className="mr-2" /> Translate
+      </button>
+      <button
+        onClick={() => setView('cryptoTracker')}
+        className={`w-full px-4 py-2 text-left flex items-center ${
+          view === 'cryptoTracker' ? 'bg-blue-500 text-white' : 'text-gray-600 dark:text-gray-400'
+        } hover:bg-blue-500 hover:text-white rounded`}
+      >
+        <FaBitcoin size={20} className="mr-2" /> Crypto Tracker
       </button>
     </nav>
   );
