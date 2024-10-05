@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { FaChevronLeft, FaChevronRight, FaCheck } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { MdContentPaste, MdTranslate } from 'react-icons/md';
+import PostCard from './PostCard';
 
 export default function Dashboard({ result, onVisualize, onTranslate }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,31 +51,6 @@ export default function Dashboard({ result, onVisualize, onTranslate }) {
     }
     setSelectMode(false);
     setSelectedPosts([]);
-  };
-
-  const renderMedia = (post) => {
-    if (post.media && post.media.type && post.media.data) {
-      switch (post.media.type) {
-        case 'video':
-          return (
-            <video controls className="w-full h-auto mb-2">
-              <source src={post.media.data} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          );
-        case 'photo':
-          return (
-            <img 
-              src={post.media.data} 
-              alt="Post media" 
-              className="w-full h-auto mb-2 rounded-lg"
-            />
-          );
-        default:
-          return null;
-      }
-    }
-    return null;
   };
 
   return (
@@ -131,32 +107,13 @@ export default function Dashboard({ result, onVisualize, onTranslate }) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         {currentPosts.map((post, index) => (
-          <div
+          <PostCard
             key={startIndex + index}
-            className={`glass-card p-4 ${
-              selectMode && selectedPosts.includes(post)
-                ? 'border-blue-500 dark:border-blue-400'
-                : 'border-gray-300 dark:border-gray-600'
-            }`}
-            onClick={() => selectMode && handleSelectPost(post)}
-          >
-            {selectMode && (
-              <div className="flex justify-end mb-2">
-                <input
-                  type="checkbox"
-                  checked={selectedPosts.includes(post)}
-                  onChange={() => handleSelectPost(post)}
-                  className="h-5 w-5"
-                />
-              </div>
-            )}
-            {renderMedia(post)}
-            <p className="font-bold mb-2">{post.text}</p>
-            {post.author && <p className="text-gray-600 dark:text-gray-300">Author: {post.author}</p>}
-            {post.group_name && <p className="text-gray-600 dark:text-gray-300">Group/Channel: {post.group_name}</p>}
-            <p className="text-gray-600 dark:text-gray-300">Sentiment: {post.sentiment.toFixed(2)}</p>
-            <p className="text-gray-600 dark:text-gray-300">Keywords: {post.keywords.join(', ')}</p>
-          </div>
+            post={post}
+            selectMode={selectMode}
+            isSelected={selectedPosts.includes(post)}
+            onSelect={() => handleSelectPost(post)}
+          />
         ))}
       </div>
     </div>

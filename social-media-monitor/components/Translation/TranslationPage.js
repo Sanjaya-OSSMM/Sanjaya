@@ -69,7 +69,6 @@ export default function TranslationPage({ postsToTranslate }) {
           <option value="es">Spanish</option>
           <option value="fr">French</option>
           <option value="de">German</option>
-          {/* Add more language options as needed */}
         </select>
         <button
           onClick={() => handleTranslate(keyword)}

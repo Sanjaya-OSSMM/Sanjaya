@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useTheme } from 'next-themes'
-import InputForm from '../components/InputForm'
-import Dashboard from '../components/Dashboard'
-import Sidebar from '../components/Sidebar'
-import Visualize from '../components/VisualizationTab'
-import FilterDialog from '../components/FilterDialog'
-import TranslationPage from '../components/TranslationPage'
+import InputForm from '../components/Input/InputForm'
+import Dashboard from '../components/View/Dashboard/Dashboard'
+import Sidebar from '../components/Sidebar/Sidebar'
+import Visualize from '../components/View/Visualization/VisualizationTab'
+import FilterDialog from '../components/Input/FilterDialog'
+import TranslationPage from '../components/Translation/TranslationPage'
 
 export default function Home() {
   const [analysisResult, setAnalysisResult] = useState(null)
