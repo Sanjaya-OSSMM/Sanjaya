@@ -70,16 +70,6 @@ router.get('/crypto/transactions', async (req, res) => {
   }
 });
 
-router.get('/crypto/marketcap', async (req, res) => {
-  try {
-    const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false');
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error fetching market cap data:', error);
-    res.status(500).json({ error: 'Failed to fetch market cap data' });
-  }
-});
-
 router.get('/crypto/hashrate', async (req, res) => {
   try {
     const response = await axios.get('https://api.blockchain.info/pools?timespan=5days');
@@ -97,23 +87,6 @@ router.get('/crypto/hashrate', async (req, res) => {
   } catch (error) {
     console.error('Error fetching hashrate distribution data:', error);
     res.status(500).json({ error: 'Failed to fetch hashrate distribution data' });
-  }
-});
-
-router.get('/crypto/candlestick', async (req, res) => {
-  try {
-    const response = await axios.get('https://api.coingecko.com/api/v3/coins/bitcoin/ohlc?vs_currency=usd&days=7');
-    const formattedData = response.data.map(([timestamp, open, high, low, close]) => ({
-      date: new Date(timestamp).toISOString().split('T')[0],
-      open,
-      high,
-      low,
-      close,
-    }));
-    res.json(formattedData);
-  } catch (error) {
-    console.error('Error fetching candlestick data:', error);
-    res.status(500).json({ error: 'Failed to fetch candlestick data' });
   }
 });
 

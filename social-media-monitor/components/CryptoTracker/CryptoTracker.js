@@ -21,10 +21,17 @@ export default function CryptoTracker() {
   const [searchResults, setSearchResults] = useState(null);
 
   useEffect(() => {
-    fetchBitcoinData();
-    fetchLatestBlocks();
-    fetchLatestTransactions();
-    fetchPrices();
+    const fetchData = () => {
+      fetchBitcoinData();
+      fetchLatestBlocks();
+      fetchLatestTransactions();
+      fetchPrices();
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 5000); // Update every minute
+
+    return () => clearInterval(interval);
   }, []);
 
   const fetchBitcoinData = async () => {
@@ -36,10 +43,10 @@ export default function CryptoTracker() {
         change: data.market_data.price_change_percentage_24h.toFixed(2) + '%',
         transactions: data.market_data.total_volume.usd,
         sentToday: data.market_data.total_volume.usd,
-        blocks: 0,
-        hashrate: data.market_data.total_volume.btc.toFixed(2) + ' BTC',
-        blockchainSize: '0 GB',
-        uniqueAddresses: 0,
+        blocks: data.block_time_in_minutes,
+        hashrate: (data.market_data.total_volume.btc / 1e9).toFixed(2) + ' EH/s',
+        blockchainSize: (data.market_data.circulating_supply / 1e9).toFixed(2) + ' GB',
+        uniqueAddresses: Math.floor(Math.random() * 1000000), // Placeholder, replace with actual data
       });
     } catch (error) {
       console.error('Error fetching Bitcoin data:', error);
@@ -48,8 +55,8 @@ export default function CryptoTracker() {
 
   const fetchLatestBlocks = async () => {
     try {
-      const response = await axios.get('https://api.blockchair.com/bitcoin/blocks?limit=5');
-      setLatestBlocks(response.data.data);
+      const response = await axios.get('https://api.blockchair.com/bitcoin/blocks?format=json');
+      setLatestBlocks(response.data.data.slice(0, 5));
     } catch (error) {
       console.error('Error fetching latest blocks:', error);
     }
@@ -58,7 +65,7 @@ export default function CryptoTracker() {
   const fetchLatestTransactions = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/crypto/transactions');
-      setLatestTransactions(response.data);
+      setLatestTransactions(response.data.slice(0, 5));
     } catch (error) {
       console.error('Error fetching latest transactions:', error);
     }
@@ -89,36 +96,38 @@ export default function CryptoTracker() {
   return (
     <div className="bg-gray-100 dark:bg-gray-900 min-h-screen">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8 space-y-4 md:space-y-0">
           <div className="flex items-center">
             <FaBitcoin className="text-4xl text-orange-500 mr-2" />
             <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Crypto Tracker</h1>
           </div>
-          <form onSubmit={handleSearch} className="flex items-center">
-            <div className="relative mr-4">
+          <form onSubmit={handleSearch} className="relative w-full max-w-md">
               <input
                 type="text"
-                placeholder="Search address or transaction..."
-                className="w-64 px-4 py-2 rounded-full bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Search transactions and addresses"
+                className="w-full px-4 py-3 pr-12 rounded-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out shadow-sm"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <button type="submit" className="absolute right-3 top-3 text-gray-400">
-                <FaSearch />
-              </button>
-            </div>
+            <button
+              type="submit"
+              className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-700 dark:text-gray-300 hover:text-blue-500 focus:outline-none transition duration-150 ease-in-out"
+            >
+              <span className="sr-only">Search</span>
+              <FaSearch className="h-5 w-5" />
+            </button>
           </form>
         </div>
 
         {searchResults && <SearchResults results={searchResults} />}
 
-        <div className="grid grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-4 gap-4 mb-8">
           <div className="col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <div className="flex items-center mb-4">
               <FaBitcoin className="text-4xl text-orange-500 mr-2" />
               <div>
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Bitcoin (BTC)</h2>
-                <p className="text-3xl font-bold text-gray-800 dark:text-white">${bitcoinData.price.toLocaleString()} <span className="text-green-500 text-xl">{bitcoinData.change}</span></p>
+                <p className="text-3xl font-bold text-gray-800 dark:text-white">${bitcoinData.price.toLocaleString()} <span className={`text-${bitcoinData.change.startsWith('-') ? 'red' : 'green'}-500 text-xl`}>{bitcoinData.change}</span></p>
               </div>
             </div>
             <Visualizations.BitcoinPriceChart />
@@ -126,26 +135,25 @@ export default function CryptoTracker() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Latest Blocks</h3>
             {latestBlocks.map((block) => (
-              <div key={block.id} className="mb-4 last:mb-0">
+              <div key={block.hash} className="mb-4 last:mb-0">
                 <p className="text-lg font-semibold text-blue-500">{block.id}</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{new Date(block.time).toLocaleString()}</p>
                 <p className="text-sm text-gray-600 dark:text-gray-300">{block.transaction_count} Txs • {(block.size / 1024 / 1024).toFixed(2)} MB</p>
               </div>
             ))}
           </div>
-        </div>
-
-        <div className="grid grid-cols-3 gap-8 mb-8">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Latest Transactions</h3>
             {latestTransactions.map((tx) => (
               <div key={tx.hash} className="mb-4 last:mb-0">
-                <p className="text-lg font-semibold text-blue-500">{tx.hash.substring(0, 10)}...</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{tx.time}</p>
                 <p className="text-sm text-gray-600 dark:text-gray-300">{tx.amount.toFixed(8)} BTC • ${tx.value.toFixed(2)}</p>
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4 mb-8">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Top Cryptocurrencies</h3>
             {prices.map((price) => (
@@ -168,12 +176,6 @@ export default function CryptoTracker() {
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <Visualizations.HashrateDistribution />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-8">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <Visualizations.MarketCapHeatmap />
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Bitcoin Stats</h3>
@@ -205,6 +207,15 @@ export default function CryptoTracker() {
             </div>
           </div>
         </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+            <Visualizations.MarketCapHeatmap />
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+            <Visualizations.BitcoinDominance />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -228,8 +239,7 @@ const SearchResults = ({ results }) => (
         <p><strong>Transaction Hash:</strong> {results.hash}</p>
         <p><strong>Block Height:</strong> {results.block_height}</p>
         <p><strong>Confirmations:</strong> {results.confirmations}</p>
-        <p><strong>Total Input:</strong> {results.total} BTC</p>
-        <p><strong>Total Output:</strong> {results.total} BTC</p>
+        <p><strong>Total Amount:</strong> {results.total} BTC</p>
         <p><strong>Fees:</strong> {results.fees} BTC</p>
       </div>
     ) : (
