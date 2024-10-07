@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { FaSearch, FaBitcoin, FaEthereum } from 'react-icons/fa';
+import { SiTether, SiBinance } from 'react-icons/si';
+import { TbCurrencySolana } from 'react-icons/tb';
 import axios from 'axios';
+import ToggleChart from './ToggleChart';
 import Visualizations from './Visualizations';
 
 export default function CryptoTracker() {
-  const [bitcoinData, setBitcoinData] = useState({
-    price: 0,
-    change: '0%',
-    transactions: 0,
-    sentToday: 0,
-    blocks: 0,
-    hashrate: '0 EH/s',
-    blockchainSize: '0 GB',
-    uniqueAddresses: 0,
-  });
   const [latestBlocks, setLatestBlocks] = useState([]);
   const [latestTransactions, setLatestTransactions] = useState([]);
   const [prices, setPrices] = useState([]);
@@ -22,7 +15,6 @@ export default function CryptoTracker() {
 
   useEffect(() => {
     const fetchData = () => {
-      fetchBitcoinData();
       fetchLatestBlocks();
       fetchLatestTransactions();
       fetchPrices();
@@ -33,25 +25,6 @@ export default function CryptoTracker() {
 
     return () => clearInterval(interval);
   }, []);
-
-  const fetchBitcoinData = async () => {
-    try {
-      const response = await axios.get('https://api.coingecko.com/api/v3/coins/bitcoin');
-      const data = response.data;
-      setBitcoinData({
-        price: data.market_data.current_price.usd,
-        change: data.market_data.price_change_percentage_24h.toFixed(2) + '%',
-        transactions: data.market_data.total_volume.usd,
-        sentToday: data.market_data.total_volume.usd,
-        blocks: data.block_time_in_minutes,
-        hashrate: (data.market_data.total_volume.btc / 1e9).toFixed(2) + ' EH/s',
-        blockchainSize: (data.market_data.circulating_supply / 1e9).toFixed(2) + ' GB',
-        uniqueAddresses: Math.floor(Math.random() * 1000000), // Placeholder, replace with actual data
-      });
-    } catch (error) {
-      console.error('Error fetching Bitcoin data:', error);
-    }
-  };
 
   const fetchLatestBlocks = async () => {
     try {
@@ -64,8 +37,13 @@ export default function CryptoTracker() {
 
   const fetchLatestTransactions = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/crypto/transactions');
-      setLatestTransactions(response.data.slice(0, 5));
+      const response = await axios.get('https://blockchain.info/unconfirmed-transactions?format=json');
+      const formattedTransactions = response.data.txs.slice(0, 7).map(tx => ({
+        hash: tx.hash,
+        time: new Date(tx.time * 1000).toLocaleString(),
+        totalBTC: (tx.out.reduce((sum, output) => sum + output.value, 0) / 1e8).toFixed(8),
+      }));
+      setLatestTransactions(formattedTransactions);
     } catch (error) {
       console.error('Error fetching latest transactions:', error);
     }
@@ -84,11 +62,18 @@ export default function CryptoTracker() {
     e.preventDefault();
     if (searchQuery) {
       try {
-        const response = await axios.get(`http://localhost:5000/api/crypto/search/${searchQuery}`);
-        setSearchResults(response.data);
+        // First, try to search for an address
+        const addressResponse = await axios.get(`https://blockchain.info/rawaddr/${searchQuery}`);
+        setSearchResults(addressResponse.data);
       } catch (error) {
-        console.error('Error searching:', error);
-        setSearchResults(null);
+        try {
+          // If not an address, try to search for a transaction
+          const txResponse = await axios.get(`https://blockchain.info/rawtx/${searchQuery}`);
+          setSearchResults(txResponse.data);
+        } catch (error) {
+          console.error('Error searching:', error);
+          setSearchResults(null);
+        }
       }
     }
   };
@@ -96,41 +81,38 @@ export default function CryptoTracker() {
   return (
     <div className="bg-gray-100 dark:bg-gray-900 min-h-screen">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8 space-y-4 md:space-y-0">
-          <div className="flex items-center">
-            <FaBitcoin className="text-4xl text-orange-500 mr-2" />
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Crypto Tracker</h1>
-          </div>
-          <form onSubmit={handleSearch} className="relative w-full max-w-md">
-              <input
-                type="text"
-                placeholder="Search transactions and addresses"
-                className="w-full px-4 py-3 pr-12 rounded-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out shadow-sm"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            <button
-              type="submit"
-              className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-700 dark:text-gray-300 hover:text-blue-500 focus:outline-none transition duration-150 ease-in-out"
-            >
-              <span className="sr-only">Search</span>
-              <FaSearch className="h-5 w-5" />
-            </button>
-          </form>
-        </div>
+          <div className="flex flex-col md:flex-row justify-between items-center mb-8 space-y-4 md:space-y-0">
+            <div className="flex items-center">
+              <FaBitcoin className="text-4xl text-orange-500 mr-2" />
+      <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Crypto Tracker</h1>
+            </div>
+      <form onSubmit={handleSearch} className="relative w-full max-w-md">
+          <input
+            type="text"
+            placeholder="Search transactions and addresses"
+            className="w-full px-4 py-3 pr-12 rounded-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out shadow-sm"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        <button
+          type="submit"
+          className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-700 dark:text-gray-300 hover:text-blue-500 focus:outline-none transition duration-150 ease-in-out"
+        >
+          <span className="sr-only">Search</span>
+          <FaSearch className="h-5 w-5" />
+        </button>
+      </form>
+    </div>
 
         {searchResults && <SearchResults results={searchResults} />}
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <ToggleChart />
+        </div>
+
         <div className="grid grid-cols-4 gap-4 mb-8">
-          <div className="col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <div className="flex items-center mb-4">
-              <FaBitcoin className="text-4xl text-orange-500 mr-2" />
-              <div>
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Bitcoin (BTC)</h2>
-                <p className="text-3xl font-bold text-gray-800 dark:text-white">${bitcoinData.price.toLocaleString()} <span className={`text-${bitcoinData.change.startsWith('-') ? 'red' : 'green'}-500 text-xl`}>{bitcoinData.change}</span></p>
-              </div>
-            </div>
-            <Visualizations.BitcoinPriceChart />
+          <div className="col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 h-auto">
+            <Visualizations.MarketCapHeatmap />
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Latest Blocks</h3>
@@ -147,7 +129,7 @@ export default function CryptoTracker() {
             {latestTransactions.map((tx) => (
               <div key={tx.hash} className="mb-4 last:mb-0">
                 <p className="text-sm text-gray-500 dark:text-gray-400">{tx.time}</p>
-                <p className="text-sm text-gray-600 dark:text-gray-300">{tx.amount.toFixed(8)} BTC • ${tx.value.toFixed(2)}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{tx.totalBTC} BTC</p>
               </div>
             ))}
           </div>
@@ -159,7 +141,11 @@ export default function CryptoTracker() {
             {prices.map((price) => (
               <div key={price.id} className="flex justify-between items-center mb-4 last:mb-0">
                 <div className="flex items-center">
-                  {price.symbol === 'btc' ? <FaBitcoin className="text-orange-500 mr-2" /> : <FaEthereum className="text-blue-500 mr-2" />}
+                  {price.symbol === 'btc' && <FaBitcoin className="text-orange-500 mr-2" />}
+                  {price.symbol === 'eth' && <FaEthereum className="text-blue-500 mr-2" />}
+                  {price.symbol === 'usdt' && <SiTether className="text-green-500 mr-2" />}
+                  {price.symbol === 'bnb' && <SiBinance className="text-yellow-500 mr-2" />}
+                  {price.symbol === 'sol' && <TbCurrencySolana className="text-purple-500 mr-2" />}
                   <div>
                     <p className="font-semibold text-gray-800 dark:text-white">{price.name}</p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{price.symbol.toUpperCase()}</p>
@@ -174,46 +160,8 @@ export default function CryptoTracker() {
               </div>
             ))}
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <div className="col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 h-auto">
             <Visualizations.HashrateDistribution />
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Bitcoin Stats</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Transactions</p>
-                <p className="text-lg font-semibold text-gray-800 dark:text-white">{bitcoinData.transactions.toLocaleString()}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Sent Today</p>
-                <p className="text-lg font-semibold text-gray-800 dark:text-white">${bitcoinData.sentToday.toLocaleString()}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Blocks</p>
-                <p className="text-lg font-semibold text-gray-800 dark:text-white">{bitcoinData.blocks.toLocaleString()}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Network Hashrate</p>
-                <p className="text-lg font-semibold text-gray-800 dark:text-white">{bitcoinData.hashrate}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Blockchain Size</p>
-                <p className="text-lg font-semibold text-gray-800 dark:text-white">{bitcoinData.blockchainSize}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Unique Addresses (24h)</p>
-                <p className="text-lg font-semibold text-gray-800 dark:text-white">{bitcoinData.uniqueAddresses.toLocaleString()}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <Visualizations.MarketCapHeatmap />
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <Visualizations.BitcoinDominance />
           </div>
         </div>
       </div>
@@ -237,10 +185,9 @@ const SearchResults = ({ results }) => (
       <div>
         <h3 className="text-xl font-bold mb-2">Transaction Details</h3>
         <p><strong>Transaction Hash:</strong> {results.hash}</p>
-        <p><strong>Block Height:</strong> {results.block_height}</p>
-        <p><strong>Confirmations:</strong> {results.confirmations}</p>
-        <p><strong>Total Amount:</strong> {results.total} BTC</p>
-        <p><strong>Fees:</strong> {results.fees} BTC</p>
+        <p><strong>Block Height:</strong> {results.block_height || 'Unconfirmed'}</p>
+        <p><strong>Total Amount:</strong> {(results.out.reduce((sum, output) => sum + output.value, 0) / 1e8).toFixed(8)} BTC</p>
+        <p><strong>Fees:</strong> {(results.fee / 1e8).toFixed(8)} BTC</p>
       </div>
     ) : (
       <p>No detailed information available for this search query.</p>
