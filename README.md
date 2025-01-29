@@ -1,14 +1,26 @@
-# Sanjaya - a Social Media Scraper and Sentiment Analyzer
+# Sanjaya 🌐📊 - The OpenSource Software Social Media Monitor
 
-## Overview
+[![GitHub stars](https://img.shields.io/github/stars/Sanjaya-OSSMM/Sanjaya?style=social)](https://github.com/Sanjaya-OSSMM/Sanjaya)
+[![License](https://img.shields.io/badge/license-MIT-blue)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://makeapullrequest.com)
 
-This project is a **social media scraping** tool designed to fetch posts from platforms like **Twitter** and **Telegram**. The data is then analyzed for sentiment using **natural language processing (NLP)** techniques and visualized with key insights like keyword frequency and sentiment distribution.
+Sanjaya is a comprehensive open-source intelligence platform that combines **social media monitoring**, **sentiment analysis**, **cryptocurrency tracking**, and **multi-language translation** in a single dashboard.
 
-## Features
+## 🌟 Features
 
-- **Platform Scraping**: Fetch data from Twitter, Instagram, and Telegram based on a keyword.
-- **Sentiment Analysis**: Analyze the sentiment of posts using the `natural` library.
-- **Keyword Extraction**: Extract the most relevant keywords from each post using Term Frequency–Inverse Document Frequency (TF-IDF).
-- **Data Visualization**: Visualize the sentiment distribution and keyword occurrence for better insights.
-- **Session Persistence**: Automatically saves and reuses session information to avoid repeated logins.
-- **Rate Limiting**: Implements rate-limiting mechanisms to avoid scraping limits (Telegram).
+### 🕵️ Social Intelligence
+- **Multi-Platform Scraping**: Twitter & Telegram support with smart rate limiting
+- **Advanced Sentiment Analysis**: NLP-powered sentiment scoring (-1 to 1)
+- **Contextual Translation**: Real-time post translation for 4 languages
+- **Smart Filtering**: Advanced search operators (AND/OR/NOT) and media filters
+
+### 📈 Crypto Intelligence
+- **Live Market Data**: Prices, market cap, and volume for popular coins
+- **Network Analytics**: Hashrates, blockchain sizes, and transaction metrics
+- **Visualizations**: Interactive candlestick charts and hashrate distribution maps
+- **Block Explorer**: Real-time Crypto block/transaction tracking
+
+### 🖥️ UX Features
+- **Dashboard System**: Multiple views (Analytics, Raw Data, Crypto)
+- **Smart Pagination**: Navigate large datasets with ease
+- **Bulk Operations**: Select multiple posts for analysis/translation
